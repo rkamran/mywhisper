@@ -1,0 +1,48 @@
+name: MyWhisper
+options:
+  bundleIdPrefix: com.mywhisper
+  deploymentTarget:
+    macOS: "13.3"
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+
+targets:
+  MyWhisper:
+    type: application
+    platform: macOS
+    sources:
+      - path: MyWhisper
+        excludes:
+          - "Info.plist"
+          - "MyWhisper.entitlements"
+    info:
+      path: MyWhisper/Info.plist
+      properties:
+        CFBundleName: MyWhisper
+        CFBundleDisplayName: MyWhisper
+        CFBundleShortVersionString: "0.1.0"
+        CFBundleVersion: "1"
+        LSMinimumSystemVersion: "13.3"
+        LSUIElement: true
+        NSMicrophoneUsageDescription: "MyWhisper needs the microphone to transcribe your speech locally with Whisper."
+        NSAppleEventsUsageDescription: "MyWhisper sends keystrokes so it can type your dictated text into the focused field."
+    entitlements:
+      path: MyWhisper/MyWhisper.entitlements
+      properties:
+        com.apple.security.app-sandbox: false
+        com.apple.security.device.audio-input: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mywhisper.app
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        MACOSX_DEPLOYMENT_TARGET: "13.3"
+        SWIFT_VERSION: "5.9"
+        CODE_SIGN_STYLE: Automatic
+        ENABLE_HARDENED_RUNTIME: NO
+        COMBINE_HIDPI_IMAGES: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
+    dependencies:
+      - framework: Frameworks/whisper.xcframework
+        embed: true

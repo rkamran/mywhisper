@@ -1,0 +1,24 @@
+## Xcode
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xcworkspace/xcuserdata/
+MyWhisper.xcodeproj/xcuserdata/
+MyWhisper.xcodeproj/project.xcworkspace/xcuserdata/
+
+## macOS
+.DS_Store
+
+## Swift Package Manager
+.swiftpm/
+.build/
+Package.resolved
+
+## Build / packaging output
+.build-install/
+.build-package/
+dist/
+
+## Local tooling
+.claude/
