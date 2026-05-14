@@ -1,3 +1,6 @@
+using System;
+using System.IO;
+
 namespace MyWhisper.Services;
 
 /// <summary>Resolves the per-user data directory for MyWhisper.</summary>
