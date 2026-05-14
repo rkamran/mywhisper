@@ -18,8 +18,8 @@ prompt, but no code — each is native to its platform.
 
 - **macOS** — released. Download the latest `.dmg` from
   [Releases](https://github.com/rkamran/mywhisper/releases).
-- **Windows** — not started; stack and architecture mapped out in
-  [`windows/README.md`](windows/README.md).
+- **Windows** — code-complete (C# / WPF), pending a first build pass on a
+  Windows machine. See [`windows/README.md`](windows/README.md).
 
 ## Working in this repo
 

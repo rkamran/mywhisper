@@ -20,5 +20,11 @@ Package.resolved
 .build-package/
 dist/
 
+## .NET / Windows
+bin/
+obj/
+.publish/
+*.user
+
 ## Local tooling
 .claude/

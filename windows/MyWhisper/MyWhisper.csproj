@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <AssemblyName>MyWhisper</AssemblyName>
+    <RootNamespace>MyWhisper</RootNamespace>
+    <Version>1.0.0</Version>
+    <Product>MyWhisper</Product>
+    <Description>Push-to-talk dictation for Windows, powered by Whisper.</Description>
+    <Platforms>x64;ARM64</Platforms>
+    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <Authors>MyWhisper</Authors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Speech-to-text: whisper.cpp wrapped for .NET. Runtime package ships the
+         native CPU library; swap to Whisper.net.Runtime.Cublas for NVIDIA GPUs. -->
+    <PackageReference Include="Whisper.net" Version="1.7.4" />
+    <PackageReference Include="Whisper.net.Runtime" Version="1.7.4" />
+
+    <!-- Audio capture (WASAPI) + resampling. -->
+    <PackageReference Include="NAudio" Version="2.2.1" />
+
+    <!-- System tray icon for WPF. -->
+    <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
+
+    <!-- DPAPI for at-rest encryption of the polish API key. -->
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Assets\app.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
