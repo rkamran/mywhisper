@@ -18,6 +18,15 @@
     <SelfContained>true</SelfContained>
     <PublishSingleFile>true</PublishSingleFile>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <!--
+      Whisper.net.Runtime ships native DLLs (whisper.dll, ggml*.dll, …) plus
+      adjacent metadata that the library probes for at startup. Under
+      PublishSingleFile the default extractor only restores unmanaged binaries,
+      so the probe fails with "Native library not found in default path."
+      IncludeAllContentForSelfExtract forces every bundled item to land in the
+      same extraction directory at runtime, satisfying the probe.
+    -->
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
     <Authors>MyWhisper</Authors>
   </PropertyGroup>
 
