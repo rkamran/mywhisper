@@ -44,9 +44,10 @@ Compress-Archive -Path (Join-Path $publishD '*') -DestinationPath $zipPath
 
 $sizeMB = [math]::Round((Get-Item $zipPath).Length / 1MB, 1)
 Write-Host ""
-Write-Host "OK  Wrote $zipPath ($sizeMB MB)"
+Write-Host ("OK  Wrote {0} ({1} MB)" -f $zipPath, $sizeMB)
 Write-Host ""
 Write-Host "Share that zip. Tell the recipient:"
 Write-Host "  1. Extract anywhere and run MyWhisper.exe"
 Write-Host "  2. SmartScreen may warn (unsigned app) -> More info -> Run anyway"
-Write-Host "  3. The setup window downloads the Whisper model (~141 MB) on first run"
+Write-Host "  3. The setup window walks through downloading a Whisper model"
+Write-Host "     (148 MB to 3 GB depending on the size you pick)"
