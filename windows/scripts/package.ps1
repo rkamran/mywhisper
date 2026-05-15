@@ -68,15 +68,34 @@ $sizeMB = [math]::Round((Get-Item $zipPath).Length / 1MB, 1)
 Write-Host ""
 Write-Host ("OK  Wrote {0} ({1} MB)" -f $zipPath, $sizeMB)
 
-# Optional: also build an Inno Setup installer when iscc.exe is on PATH.
+# Optional: also build an Inno Setup installer if iscc.exe is available.
 # Install with:  winget install JRSoftware.InnoSetup
-$iscc = Get-Command iscc.exe -ErrorAction SilentlyContinue
-if ($iscc) {
+# Inno Setup's installer doesn't add iscc.exe to PATH, so we fall back to
+# probing the standard install locations after the PATH lookup.
+$isccPath = $null
+$cmd = Get-Command iscc.exe -ErrorAction SilentlyContinue
+if ($cmd) { $isccPath = $cmd.Source }
+if (-not $isccPath) {
+    $probes = @(
+        "${env:ProgramFiles(x86)}\Inno Setup 6\iscc.exe",
+        "$env:ProgramFiles\Inno Setup 6\iscc.exe",
+        "$env:LOCALAPPDATA\Programs\Inno Setup 6\iscc.exe"
+    )
+    foreach ($probe in $probes) {
+        if ($probe -and (Test-Path $probe)) {
+            $isccPath = $probe
+            break
+        }
+    }
+}
+
+if ($isccPath) {
     Write-Host ""
     Write-Host "==> Building Inno Setup installer..."
+    Write-Host "    iscc: $isccPath"
     $issPath = Join-Path $projDir 'installer\MyWhisper.iss'
     $publishAbs = (Resolve-Path $publishD).Path
-    & $iscc.Source `
+    & $isccPath `
         "/Q" `
         "/DProductVersion=$version" `
         "/DPublishDir=$publishAbs" `
