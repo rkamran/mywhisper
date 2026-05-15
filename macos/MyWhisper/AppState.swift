@@ -18,6 +18,7 @@ enum DictationState: Equatable {
 final class AppState: ObservableObject {
     static let shared = AppState()
     private static let selectedDeviceUIDKey = "selectedInputDeviceUID"
+    private static let selectedLanguageKey  = "selectedLanguage"
     private static let polishEnabledKey      = "polishEnabled"
     private static let polishEndpointKey     = "polishEndpoint"
     private static let polishModelKey        = "polishModel"
@@ -33,6 +34,9 @@ final class AppState: ObservableObject {
     @Published var availableInputDevices: [AudioInputDevice] = []
     @Published var selectedInputDeviceUID: String? {
         didSet { UserDefaults.standard.set(selectedInputDeviceUID, forKey: Self.selectedDeviceUIDKey) }
+    }
+    @Published var selectedLanguage: String = "auto" {
+        didSet { UserDefaults.standard.set(selectedLanguage, forKey: Self.selectedLanguageKey) }
     }
 
     @Published var polishEnabled: Bool = false {
@@ -55,6 +59,9 @@ final class AppState: ObservableObject {
     private init() {
         let defaults = UserDefaults.standard
         self.selectedInputDeviceUID = defaults.string(forKey: Self.selectedDeviceUIDKey)
+        if let lang = defaults.string(forKey: Self.selectedLanguageKey), !lang.isEmpty {
+            self.selectedLanguage = lang
+        }
         self.polishEnabled  = defaults.bool(forKey: Self.polishEnabledKey)
         if let ep = defaults.string(forKey: Self.polishEndpointKey), !ep.isEmpty {
             self.polishEndpoint = ep
@@ -262,16 +269,17 @@ final class AppState: ObservableObject {
         }
         dictation = .transcribing
         let engine = whisper
-        let raw: String = await Task.detached(priority: .userInitiated) { [samples] in
+        let language = selectedLanguage
+        let raw: String = await Task.detached(priority: .userInitiated) { [samples, language] in
             guard let engine else { return "" }
             do {
-                return try engine.transcribe(samples: samples)
+                return try engine.transcribe(samples: samples, language: language)
             } catch {
                 log.error("whisper transcribe threw: \(error.localizedDescription, privacy: .public)")
                 return ""
             }
         }.value
-        log.info("whisper raw: \"\(raw, privacy: .public)\"")
+        log.info("whisper raw (\(language, privacy: .public)): \"\(raw, privacy: .public)\"")
 
         let cleaned = Self.clean(raw)
         guard !cleaned.isEmpty else {

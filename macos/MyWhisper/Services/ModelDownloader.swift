@@ -13,8 +13,13 @@ enum ModelDownloaderError: LocalizedError {
 }
 
 final class ModelDownloader: NSObject {
-    static let modelName = "ggml-base.en.bin"
-    static let remoteURL = URL(string: "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin")!
+    /// Multilingual ggml-base model — handles ~99 languages. Replaces the
+    /// English-only `ggml-base.en` that earlier builds shipped.
+    static let modelName = "ggml-base.bin"
+    static let remoteURL = URL(string: "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin")!
+
+    /// Pre-multilingual filename, removed after a successful new download.
+    static let legacyEnglishModelName = "ggml-base.en.bin"
 
     static var directory: URL {
         let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -27,7 +32,7 @@ final class ModelDownloader: NSObject {
 
     static var isDownloaded: Bool {
         guard FileManager.default.fileExists(atPath: localPath.path) else { return false }
-        // Sanity check: ggml-base.en.bin is ~141 MB. Reject obvious truncations.
+        // ggml-base.bin is ~148 MB. Reject obvious truncations.
         let size = (try? FileManager.default.attributesOfItem(atPath: localPath.path)[.size] as? Int) ?? 0
         return size > 50_000_000
     }
@@ -72,6 +77,9 @@ extension ModelDownloader: URLSessionDownloadDelegate {
         do {
             try? FileManager.default.removeItem(at: dest)
             try FileManager.default.moveItem(at: location, to: dest)
+            // Best-effort cleanup of the old English-only model (~141 MB).
+            let legacy = ModelDownloader.directory.appendingPathComponent(ModelDownloader.legacyEnglishModelName)
+            try? FileManager.default.removeItem(at: legacy)
             continuation?.resume(returning: ())
         } catch {
             continuation?.resume(throwing: ModelDownloaderError.writeFailed(error))

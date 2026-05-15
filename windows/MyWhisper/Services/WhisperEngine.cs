@@ -8,7 +8,7 @@ using Whisper.net;
 namespace MyWhisper.Services;
 
 /// <summary>
-/// Wraps Whisper.net (whisper.cpp) for local English transcription.
+/// Wraps Whisper.net (whisper.cpp) for local multilingual transcription.
 /// One instance owns the loaded model; reuse it across dictation sessions.
 /// </summary>
 public sealed class WhisperEngine : IDisposable
@@ -27,13 +27,15 @@ public sealed class WhisperEngine : IDisposable
     }
 
     /// <summary>
-    /// Transcribes 16 kHz mono float samples. Returns the concatenated segment
-    /// text, trimmed. Safe to call from a background thread.
+    /// Transcribes 16 kHz mono float samples in the given <paramref name="language"/>.
+    /// Pass <c>"auto"</c> to let whisper.cpp detect the language per utterance.
     /// </summary>
-    public async Task<string> TranscribeAsync(float[] samples, CancellationToken ct = default)
+    public async Task<string> TranscribeAsync(float[] samples, string language, CancellationToken ct = default)
     {
         if (samples.Length == 0)
             return string.Empty;
+
+        string lang = string.IsNullOrWhiteSpace(language) ? "auto" : language;
 
         // A processor is cheap; build a fresh one per call so state never leaks
         // between sessions.
@@ -41,7 +43,7 @@ public sealed class WhisperEngine : IDisposable
         lock (_gate)
         {
             processor = _factory.CreateBuilder()
-                .WithLanguage("en")
+                .WithLanguage(lang)
                 .WithNoContext()
                 .Build();
         }

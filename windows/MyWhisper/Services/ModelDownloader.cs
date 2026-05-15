@@ -6,18 +6,25 @@ using System.Threading.Tasks;
 
 namespace MyWhisper.Services;
 
-/// <summary>Downloads the ggml-base.en Whisper model into the per-user data directory.</summary>
+/// <summary>
+/// Downloads the multilingual ggml-base Whisper model into the per-user data
+/// directory. Replaces the English-only ggml-base.en that earlier builds shipped.
+/// </summary>
 public sealed class ModelDownloader
 {
-    public const string ModelFileName = "ggml-base.en.bin";
+    public const string ModelFileName = "ggml-base.bin";
+
+    /// <summary>Pre-multilingual filename, cleaned up after a successful new download.</summary>
+    public const string LegacyEnglishModelFileName = "ggml-base.en.bin";
 
     private const string RemoteUrl =
-        "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin";
+        "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin";
 
-    // ggml-base.en.bin is ~141 MB; reject obvious truncations.
+    // ggml-base.bin is ~148 MB; reject obvious truncations.
     private const long MinValidSize = 50_000_000;
 
     public static string LocalPath => Path.Combine(AppPaths.DataDirectory, ModelFileName);
+    private static string LegacyLocalPath => Path.Combine(AppPaths.DataDirectory, LegacyEnglishModelFileName);
 
     public static bool IsDownloaded
     {
@@ -60,6 +67,15 @@ public sealed class ModelDownloader
         if (File.Exists(LocalPath))
             File.Delete(LocalPath);
         File.Move(tempPath, LocalPath);
+
+        // Best-effort cleanup of the old English-only model (~141 MB).
+        try
+        {
+            if (File.Exists(LegacyLocalPath))
+                File.Delete(LegacyLocalPath);
+        }
+        catch { /* harmless if it lingers */ }
+
         progress.Report(1.0);
     }
 }

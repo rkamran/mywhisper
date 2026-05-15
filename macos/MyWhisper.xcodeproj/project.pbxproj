@@ -17,6 +17,7 @@
 		6FF1AF0817246D7EB2944F78 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C612900822B6319C8A06AAF /* AppDelegate.swift */; };
 		71B41EFB198305B9BF2B2919 /* HotkeyMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F90C97A41D7BF427B88B78 /* HotkeyMonitor.swift */; };
 		886566555392A7CE1BFD137D /* WhisperEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = E54DAB3A13D01FAB1A71DB17 /* WhisperEngine.swift */; };
+		9694097BD9BFA86E9AA08C6C /* WhisperLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2667D7F1F403AAC93964E20A /* WhisperLanguage.swift */; };
 		97725A69C14820AB96398CEA /* SetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06899109E491CC8F32FB4FAB /* SetupView.swift */; };
 		AA6854E6F4910F660805D0A4 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 915D010E348B3851A624D7B8 /* AudioRecorder.swift */; };
 		AA8D701CEA476D2AD7DADA50 /* TextInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF542796D55FD937F5643A4B /* TextInjector.swift */; };
@@ -43,6 +44,7 @@
 		06899109E491CC8F32FB4FAB /* SetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupView.swift; sourceTree = "<group>"; };
 		1C612900822B6319C8A06AAF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1F67583F483BE6ADBD70DBC6 /* AudioDeviceProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioDeviceProbe.swift; sourceTree = "<group>"; };
+		2667D7F1F403AAC93964E20A /* WhisperLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhisperLanguage.swift; sourceTree = "<group>"; };
 		2B1CE5257181F45A04121514 /* Polisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Polisher.swift; sourceTree = "<group>"; };
 		2D3DCE8189CD1B809B137918 /* MyWhisperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyWhisperApp.swift; sourceTree = "<group>"; };
 		4D0588197803478E11FC8894 /* ModelDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelDownloader.swift; sourceTree = "<group>"; };
@@ -78,6 +80,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		A83AF72577F520C5485D389C /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				2667D7F1F403AAC93964E20A /* WhisperLanguage.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		D22DA89BD35FD0DAD2F24E37 = {
 			isa = PBXGroup;
 			children = (
@@ -94,6 +104,7 @@
 				B7CB34E3695C75E42F07B03D /* AppState.swift */,
 				93A9B62A53ECD87A2A91B173 /* Assets.xcassets */,
 				2D3DCE8189CD1B809B137918 /* MyWhisperApp.swift */,
+				A83AF72577F520C5485D389C /* Models */,
 				E95CE8AB886F94355AB0F1BD /* Services */,
 				F56CB741A823F35FBA993851 /* Views */,
 			);
@@ -217,6 +228,7 @@
 				97725A69C14820AB96398CEA /* SetupView.swift in Sources */,
 				AA8D701CEA476D2AD7DADA50 /* TextInjector.swift in Sources */,
 				886566555392A7CE1BFD137D /* WhisperEngine.swift in Sources */,
+				9694097BD9BFA86E9AA08C6C /* WhisperLanguage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

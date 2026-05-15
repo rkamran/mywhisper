@@ -33,7 +33,9 @@ final class WhisperEngine {
         whisper_free(ctx)
     }
 
-    func transcribe(samples: [Float]) throws -> String {
+    /// Transcribes `samples` in the given `language`. Pass `"auto"` to let
+    /// whisper.cpp detect the language per utterance.
+    func transcribe(samples: [Float], language: String) throws -> String {
         var params = whisper_full_default_params(WHISPER_SAMPLING_GREEDY)
         params.print_realtime = false
         params.print_progress = false
@@ -45,7 +47,7 @@ final class WhisperEngine {
         params.suppress_blank = true
         params.n_threads = threadCount
 
-        let lang = strdup("en")
+        let lang = strdup(language.isEmpty ? "auto" : language)
         defer { free(lang) }
         params.language = UnsafePointer(lang)
 

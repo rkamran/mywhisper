@@ -126,7 +126,7 @@ struct SetupView: View {
     private var modelRow: some View {
         SetupStep(
             number: 3,
-            title: "Whisper model (ggml-base.en, ~141 MB)",
+            title: "Whisper model (ggml-base, ~148 MB, multilingual)",
             description: "Downloads once to ~/Library/Application Support/MyWhisper. Runs locally — no audio leaves your Mac.",
             status: state.modelDownloaded ? StatusBadge(text: "Ready", color: .green) : StatusBadge(text: "Not downloaded", color: .orange)
         ) {
@@ -149,8 +149,34 @@ struct SetupView: View {
                     state.refreshModelStatus()
                 }
                 .controlSize(.small)
+
+                languagePicker
             }
         }
+    }
+
+    private var languagePicker: some View {
+        let binding = Binding(
+            get: { state.selectedLanguage },
+            set: { state.selectedLanguage = $0 }
+        )
+        return VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 8) {
+                Text("Language")
+                Picker("", selection: binding) {
+                    ForEach(WhisperLanguage.supported) { lang in
+                        Text(lang.name).tag(lang.code)
+                    }
+                }
+                .labelsHidden()
+                .pickerStyle(.menu)
+                .frame(minWidth: 200, alignment: .leading)
+            }
+            Text("Auto-detect works for clips longer than a couple seconds. Pin a specific language for more reliable short utterances.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .padding(.top, 8)
     }
 
     private var polishRow: some View {

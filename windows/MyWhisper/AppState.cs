@@ -34,6 +34,7 @@ public sealed class AppState : INotifyPropertyChanged, IDisposable
         _dispatcher = dispatcher;
         _settings = Settings.Load();
         _selectedInputDeviceId = _settings.SelectedInputDeviceId;
+        _selectedLanguage = string.IsNullOrWhiteSpace(_settings.Language) ? "auto" : _settings.Language;
         _polishEnabled = _settings.PolishEnabled;
         _polishEndpoint = _settings.PolishEndpoint;
         _polishModel = _settings.PolishModel;
@@ -66,6 +67,13 @@ public sealed class AppState : INotifyPropertyChanged, IDisposable
     {
         get => _selectedInputDeviceId;
         set { if (Set(ref _selectedInputDeviceId, value)) { _settings.SelectedInputDeviceId = value; _settings.Save(); } }
+    }
+
+    private string _selectedLanguage = "auto";
+    public string SelectedLanguage
+    {
+        get => _selectedLanguage;
+        set { if (Set(ref _selectedLanguage, value)) { _settings.Language = value; _settings.Save(); } }
     }
 
     private bool _polishEnabled;
@@ -258,10 +266,11 @@ public sealed class AppState : INotifyPropertyChanged, IDisposable
         Dictation = DictationState.Transcribing;
 
         string raw;
+        string language = _selectedLanguage;
         try
         {
             var whisper = _whisper!;
-            raw = await Task.Run(() => whisper.TranscribeAsync(samples));
+            raw = await Task.Run(() => whisper.TranscribeAsync(samples, language));
         }
         catch (Exception ex)
         {
@@ -269,7 +278,7 @@ public sealed class AppState : INotifyPropertyChanged, IDisposable
             Dictation = DictationState.Error($"Transcription failed: {ex.Message}");
             return;
         }
-        Log.Info($"Whisper raw: \"{raw}\"");
+        Log.Info($"Whisper raw ({language}): \"{raw}\"");
 
         string cleaned = Clean(raw);
         if (cleaned.Length == 0)

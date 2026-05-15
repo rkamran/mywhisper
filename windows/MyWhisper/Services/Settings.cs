@@ -11,6 +11,7 @@ namespace MyWhisper.Services;
 public sealed class Settings
 {
     public string? SelectedInputDeviceId { get; set; }
+    public string Language { get; set; } = "auto";
     public bool PolishEnabled { get; set; }
     public string PolishEndpoint { get; set; } = "https://ollama.com/v1/chat/completions";
     public string PolishModel { get; set; } = "gpt-oss:20b";
