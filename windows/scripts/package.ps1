@@ -35,6 +35,28 @@ if (-not (Test-Path $exe)) {
     exit 1
 }
 
+# Copy VC++ runtime DLLs from the build machine into the publish output for
+# app-local deployment. Microsoft permits this per the VC++ Redistributable
+# license. Without these alongside MyWhisper.exe, recipients without the
+# VC++ Redistributable installed hit "Cannot load the library on this
+# platform" when Whisper.net's native whisper.dll calls LoadLibrary.
+Write-Host "==> Copying VC++ runtime DLLs for app-local deployment..."
+$vcDlls = @('VCRUNTIME140.dll', 'VCRUNTIME140_1.dll', 'MSVCP140.dll')
+$missing = @()
+foreach ($dll in $vcDlls) {
+    $src = Join-Path $env:WINDIR "System32\$dll"
+    if (Test-Path $src) {
+        Copy-Item $src $publishD -Force
+    } else {
+        $missing += $dll
+    }
+}
+if ($missing.Count -gt 0) {
+    Write-Warning ("VC++ runtime DLLs missing on this build machine: {0}" -f ($missing -join ', '))
+    Write-Warning "Install with: winget install Microsoft.VCRedist.2015+.x64"
+    Write-Warning "The shipped zip will require recipients to install the VC++ Redistributable themselves."
+}
+
 New-Item -ItemType Directory -Force -Path $distDir | Out-Null
 $zipPath = Join-Path $distDir "MyWhisper-$version-$Runtime.zip"
 if (Test-Path $zipPath) { Remove-Item $zipPath }
