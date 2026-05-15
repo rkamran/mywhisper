@@ -67,9 +67,38 @@ Compress-Archive -Path (Join-Path $publishD '*') -DestinationPath $zipPath
 $sizeMB = [math]::Round((Get-Item $zipPath).Length / 1MB, 1)
 Write-Host ""
 Write-Host ("OK  Wrote {0} ({1} MB)" -f $zipPath, $sizeMB)
+
+# Optional: also build an Inno Setup installer when iscc.exe is on PATH.
+# Install with:  winget install JRSoftware.InnoSetup
+$iscc = Get-Command iscc.exe -ErrorAction SilentlyContinue
+if ($iscc) {
+    Write-Host ""
+    Write-Host "==> Building Inno Setup installer..."
+    $issPath = Join-Path $projDir 'installer\MyWhisper.iss'
+    $publishAbs = (Resolve-Path $publishD).Path
+    & $iscc.Source `
+        "/Q" `
+        "/DProductVersion=$version" `
+        "/DPublishDir=$publishAbs" `
+        $issPath
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning "Inno Setup compilation failed (exit $LASTEXITCODE). Zip is still good."
+    } else {
+        $setupExe = Join-Path $distDir "MyWhisper-$version-Setup.exe"
+        if (Test-Path $setupExe) {
+            $setupMB = [math]::Round((Get-Item $setupExe).Length / 1MB, 1)
+            Write-Host ("OK  Wrote {0} ({1} MB)" -f $setupExe, $setupMB)
+        }
+    }
+} else {
+    Write-Host ""
+    Write-Host "Skipping installer build -- Inno Setup not found."
+    Write-Host "  Install with:  winget install JRSoftware.InnoSetup"
+    Write-Host "  Then re-run this script to produce a setup .exe alongside the zip."
+}
+
 Write-Host ""
-Write-Host "Share that zip. Tell the recipient:"
-Write-Host "  1. Extract anywhere and run MyWhisper.exe"
-Write-Host "  2. SmartScreen may warn (unsigned app) -> More info -> Run anyway"
-Write-Host "  3. The setup window walks through downloading a Whisper model"
-Write-Host "     (148 MB to 3 GB depending on the size you pick)"
+Write-Host "Share with recipients:"
+Write-Host "  * Zip: extract anywhere and run MyWhisper.exe (portable)"
+Write-Host "  * Setup.exe (if built): wizard installer with Start Menu shortcut, uninstaller, optional run-at-login"
+Write-Host "  * SmartScreen may warn on either (unsigned) -> More info -> Run anyway"
