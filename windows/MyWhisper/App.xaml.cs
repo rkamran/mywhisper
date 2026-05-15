@@ -1,11 +1,11 @@
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
 using Hardcodet.Wpf.TaskbarNotification;
 using MyWhisper.Models;
 using MyWhisper.Services;
@@ -84,19 +84,29 @@ public partial class App : Application
         {
             ToolTipText = "MyWhisper — hold Right Alt to dictate",
             ContextMenu = menu,
-            IconSource = LoadTrayIcon()
+            Icon = LoadTrayIcon()
         };
         _tray.TrayMouseDoubleClick += (_, _) => ShowSetupWindow();
     }
 
-    private static BitmapImage? LoadTrayIcon()
+    /// <summary>
+    /// Loads the tray icon directly as a <see cref="System.Drawing.Icon"/> from
+    /// the embedded WPF resource. We avoid the <c>IconSource</c> property because
+    /// Hardcodet's <c>ImageSource → Icon</c> conversion renders blank for the
+    /// PNG-compressed multi-resolution .ico format our generator produces.
+    /// </summary>
+    private static Icon? LoadTrayIcon()
     {
         try
         {
-            // app.ico is copied next to the executable (see .csproj).
-            string path = Path.Combine(AppContext.BaseDirectory, "Assets", "app.ico");
-            if (File.Exists(path))
-                return new BitmapImage(new Uri(path, UriKind.Absolute));
+            var resource = Application.GetResourceStream(
+                new Uri("Assets/app.ico", UriKind.Relative));
+            if (resource?.Stream is { } stream)
+            {
+                using (stream)
+                    return new Icon(stream);
+            }
+            Log.Warn("Tray icon resource not found at Assets/app.ico");
         }
         catch (Exception ex)
         {

@@ -35,12 +35,17 @@
 
     <!-- DPAPI for at-rest encryption of the polish API key. -->
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
+
+    <!-- System.Drawing.Icon for tray icon loading (the Hardcodet IconSource path
+         renders blank for PNG-compressed multi-resolution .ico files). -->
+    <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Assets\app.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <!-- Embed the app icon as a WPF Resource so it's loadable from the assembly
+         even when published as a single file. The ApplicationIcon directive
+         above still handles the .exe's file icon shown in Explorer. -->
+    <Resource Include="Assets\app.ico" />
   </ItemGroup>
 
 </Project>
