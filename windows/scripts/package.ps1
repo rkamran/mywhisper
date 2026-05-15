@@ -20,7 +20,7 @@ $publishD  = Join-Path $projDir ".publish\$Runtime"
 $version = $proj.Project.PropertyGroup.Version | Select-Object -First 1
 if (-not $version) { $version = '1.0.0' }
 
-Write-Host "==> Publishing MyWhisper $version ($Runtime, self-contained)…"
+Write-Host "==> Publishing MyWhisper $version ($Runtime, self-contained)..."
 dotnet publish $csproj `
     -c Release `
     -r $Runtime `
@@ -31,7 +31,7 @@ dotnet publish $csproj `
 
 $exe = Join-Path $publishD 'MyWhisper.exe'
 if (-not (Test-Path $exe)) {
-    Write-Error "Build failed — MyWhisper.exe not found in $publishD"
+    Write-Error "Build failed -- MyWhisper.exe not found in $publishD"
     exit 1
 }
 
@@ -39,7 +39,7 @@ New-Item -ItemType Directory -Force -Path $distDir | Out-Null
 $zipPath = Join-Path $distDir "MyWhisper-$version-$Runtime.zip"
 if (Test-Path $zipPath) { Remove-Item $zipPath }
 
-Write-Host "==> Zipping to $zipPath…"
+Write-Host "==> Zipping to $zipPath..."
 Compress-Archive -Path (Join-Path $publishD '*') -DestinationPath $zipPath
 
 $sizeMB = [math]::Round((Get-Item $zipPath).Length / 1MB, 1)
