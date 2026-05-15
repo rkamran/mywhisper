@@ -19,6 +19,7 @@ final class AppState: ObservableObject {
     static let shared = AppState()
     private static let selectedDeviceUIDKey = "selectedInputDeviceUID"
     private static let selectedLanguageKey  = "selectedLanguage"
+    private static let selectedModelIDKey   = "selectedModelID"
     private static let polishEnabledKey      = "polishEnabled"
     private static let polishEndpointKey     = "polishEndpoint"
     private static let polishModelKey        = "polishModel"
@@ -38,6 +39,14 @@ final class AppState: ObservableObject {
     @Published var selectedLanguage: String = "auto" {
         didSet { UserDefaults.standard.set(selectedLanguage, forKey: Self.selectedLanguageKey) }
     }
+    @Published var selectedModelID: String = "base" {
+        didSet {
+            UserDefaults.standard.set(selectedModelID, forKey: Self.selectedModelIDKey)
+            Task { @MainActor in await self.onSelectedModelChanged() }
+        }
+    }
+
+    var selectedModel: WhisperModel { WhisperModel.model(id: selectedModelID) }
 
     @Published var polishEnabled: Bool = false {
         didSet { UserDefaults.standard.set(polishEnabled, forKey: Self.polishEnabledKey) }
@@ -61,6 +70,9 @@ final class AppState: ObservableObject {
         self.selectedInputDeviceUID = defaults.string(forKey: Self.selectedDeviceUIDKey)
         if let lang = defaults.string(forKey: Self.selectedLanguageKey), !lang.isEmpty {
             self.selectedLanguage = lang
+        }
+        if let mid = defaults.string(forKey: Self.selectedModelIDKey), !mid.isEmpty {
+            self.selectedModelID = mid
         }
         self.polishEnabled  = defaults.bool(forKey: Self.polishEnabledKey)
         if let ep = defaults.string(forKey: Self.polishEndpointKey), !ep.isEmpty {
@@ -162,30 +174,49 @@ final class AppState: ObservableObject {
     }
 
     func refreshModelStatus() {
-        modelDownloaded = ModelDownloader.isDownloaded
+        modelDownloaded = ModelDownloader.isDownloaded(selectedModel)
     }
 
     func downloadModel() async {
+        let target = selectedModel
+        modelDownloadProgress = 0
         do {
-            try await downloader.download { [weak self] progress in
+            try await downloader.download(model: target) { [weak self] progress in
                 Task { @MainActor in self?.modelDownloadProgress = progress }
             }
-            modelDownloaded = true
-            modelDownloadProgress = 1.0
-            await loadWhisper()
-            await reconcile()
+            // Only flip downloaded=true if the user is still on the same model.
+            if selectedModelID == target.id {
+                modelDownloaded = true
+                modelDownloadProgress = 1.0
+                await loadWhisper()
+                await reconcile()
+            }
         } catch {
             dictation = .error("Model download failed: \(error.localizedDescription)")
         }
     }
 
     private func loadWhisper() async {
-        let path = ModelDownloader.localPath.path
+        let path = ModelDownloader.localPath(for: selectedModel).path
         do {
             whisper = try WhisperEngine(modelPath: path)
+            log.info("loaded whisper model: \(self.selectedModelID, privacy: .public)")
         } catch {
             dictation = .error("Failed to load model: \(error.localizedDescription)")
         }
+    }
+
+    /// Called whenever the user picks a different model in the picker.
+    /// If the new model is already downloaded, swap the whisper engine; otherwise
+    /// surface the Download button by clearing the downloaded flag.
+    private func onSelectedModelChanged() async {
+        whisper = nil
+        modelDownloadProgress = 0
+        refreshModelStatus()
+        if modelDownloaded {
+            await loadWhisper()
+        }
+        await reconcile()
     }
 
     private func reconcile() async {

@@ -21,6 +21,7 @@
 		97725A69C14820AB96398CEA /* SetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06899109E491CC8F32FB4FAB /* SetupView.swift */; };
 		AA6854E6F4910F660805D0A4 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 915D010E348B3851A624D7B8 /* AudioRecorder.swift */; };
 		AA8D701CEA476D2AD7DADA50 /* TextInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF542796D55FD937F5643A4B /* TextInjector.swift */; };
+		BDD61C00529DAE2803157A8C /* WhisperModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13EA680A62A3AFDE6F5C93F2 /* WhisperModel.swift */; };
 		D3E2D0DBAF290B0DD5227626 /* ModelDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D0588197803478E11FC8894 /* ModelDownloader.swift */; };
 		E9CFF1CC86A425CFB6B92511 /* MyWhisperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3DCE8189CD1B809B137918 /* MyWhisperApp.swift */; };
 		EDC0E64C7945E954F8F8E27D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 93A9B62A53ECD87A2A91B173 /* Assets.xcassets */; };
@@ -42,6 +43,7 @@
 
 /* Begin PBXFileReference section */
 		06899109E491CC8F32FB4FAB /* SetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupView.swift; sourceTree = "<group>"; };
+		13EA680A62A3AFDE6F5C93F2 /* WhisperModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhisperModel.swift; sourceTree = "<group>"; };
 		1C612900822B6319C8A06AAF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1F67583F483BE6ADBD70DBC6 /* AudioDeviceProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioDeviceProbe.swift; sourceTree = "<group>"; };
 		2667D7F1F403AAC93964E20A /* WhisperLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhisperLanguage.swift; sourceTree = "<group>"; };
@@ -84,6 +86,7 @@
 			isa = PBXGroup;
 			children = (
 				2667D7F1F403AAC93964E20A /* WhisperLanguage.swift */,
+				13EA680A62A3AFDE6F5C93F2 /* WhisperModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -230,6 +233,7 @@
 				AA8D701CEA476D2AD7DADA50 /* TextInjector.swift in Sources */,
 				886566555392A7CE1BFD137D /* WhisperEngine.swift in Sources */,
 				9694097BD9BFA86E9AA08C6C /* WhisperLanguage.swift in Sources */,
+				BDD61C00529DAE2803157A8C /* WhisperModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

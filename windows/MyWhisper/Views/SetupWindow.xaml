@@ -72,14 +72,24 @@
                 <!-- Step 1: Whisper model -->
                 <Border Style="{StaticResource Card}">
                     <StackPanel>
-                        <TextBlock Style="{StaticResource StepTitle}"
-                                   Text="1 · Whisper model (ggml-base, ~148 MB, multilingual)" />
+                        <TextBlock Style="{StaticResource StepTitle}" Text="1 · Whisper model" />
                         <TextBlock Style="{StaticResource StepDesc}"
-                                   Text="Downloads once to %LOCALAPPDATA%\MyWhisper. Runs locally — no audio leaves your PC." />
+                                   Text="Bigger models transcribe lower-resource languages (Urdu, Hindi, Arabic, …) much more accurately. Each model downloads once to %LOCALAPPDATA%\MyWhisper and runs locally." />
+
+                        <!-- Model picker (always visible) -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <TextBlock Text="Size" Foreground="#FFA0A0A0"
+                                       VerticalAlignment="Center" Margin="0,0,8,0" Width="80" />
+                            <ComboBox Width="350"
+                                      ItemsSource="{x:Static models:WhisperModel.Supported}"
+                                      DisplayMemberPath="DisplayName"
+                                      SelectedValuePath="Id"
+                                      SelectedValue="{Binding SelectedModelId, Mode=TwoWay}" />
+                        </StackPanel>
 
                         <!-- Not downloaded -->
                         <StackPanel Visibility="{Binding ModelDownloaded, Converter={StaticResource InvBoolToVis}}">
-                            <Button x:Name="DownloadButton" Content="Download model"
+                            <Button x:Name="DownloadButton" Content="Download selected model"
                                     Click="OnDownloadModel" HorizontalAlignment="Left" />
                             <ProgressBar Height="6" Margin="0,8,0,2"
                                          Minimum="0" Maximum="1"

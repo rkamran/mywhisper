@@ -3,51 +3,41 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using MyWhisper.Models;
 
 namespace MyWhisper.Services;
 
 /// <summary>
-/// Downloads the multilingual ggml-base Whisper model into the per-user data
-/// directory. Replaces the English-only ggml-base.en that earlier builds shipped.
+/// Downloads a chosen multilingual Whisper model into the per-user data directory.
 /// </summary>
 public sealed class ModelDownloader
 {
-    public const string ModelFileName = "ggml-base.bin";
-
-    /// <summary>Pre-multilingual filename, cleaned up after a successful new download.</summary>
+    /// <summary>Pre-multilingual filename, cleaned up once any new model lands.</summary>
     public const string LegacyEnglishModelFileName = "ggml-base.en.bin";
 
-    private const string RemoteUrl =
-        "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin";
+    public static string LocalPath(WhisperModel model)
+        => Path.Combine(AppPaths.DataDirectory, model.FileName);
 
-    // ggml-base.bin is ~148 MB; reject obvious truncations.
-    private const long MinValidSize = 50_000_000;
-
-    public static string LocalPath => Path.Combine(AppPaths.DataDirectory, ModelFileName);
-    private static string LegacyLocalPath => Path.Combine(AppPaths.DataDirectory, LegacyEnglishModelFileName);
-
-    public static bool IsDownloaded
+    public static bool IsDownloaded(WhisperModel model)
     {
-        get
-        {
-            var info = new FileInfo(LocalPath);
-            return info.Exists && info.Length > MinValidSize;
-        }
+        var info = new FileInfo(LocalPath(model));
+        return info.Exists && info.Length >= (long)model.MinSizeMB * 1024 * 1024;
     }
 
     /// <summary>
-    /// Downloads the model, reporting fractional progress (0..1). Writes to a
-    /// temp file first and moves it into place only on success.
+    /// Downloads <paramref name="model"/>, reporting fractional progress (0..1).
+    /// Writes to a temp file first and moves it into place only on success.
     /// </summary>
-    public async Task DownloadAsync(IProgress<double> progress, CancellationToken ct = default)
+    public async Task DownloadAsync(WhisperModel model, IProgress<double> progress, CancellationToken ct = default)
     {
         using var http = new HttpClient { Timeout = Timeout.InfiniteTimeSpan };
         using var response = await http.GetAsync(
-            RemoteUrl, HttpCompletionOption.ResponseHeadersRead, ct);
+            model.Url, HttpCompletionOption.ResponseHeadersRead, ct);
         response.EnsureSuccessStatusCode();
 
         long? total = response.Content.Headers.ContentLength;
-        string tempPath = LocalPath + ".part";
+        string finalPath = LocalPath(model);
+        string tempPath = finalPath + ".part";
 
         await using (var source = await response.Content.ReadAsStreamAsync(ct))
         await using (var dest = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None))
@@ -64,15 +54,16 @@ public sealed class ModelDownloader
             }
         }
 
-        if (File.Exists(LocalPath))
-            File.Delete(LocalPath);
-        File.Move(tempPath, LocalPath);
+        if (File.Exists(finalPath))
+            File.Delete(finalPath);
+        File.Move(tempPath, finalPath);
 
         // Best-effort cleanup of the old English-only model (~141 MB).
         try
         {
-            if (File.Exists(LegacyLocalPath))
-                File.Delete(LegacyLocalPath);
+            string legacy = Path.Combine(AppPaths.DataDirectory, LegacyEnglishModelFileName);
+            if (File.Exists(legacy))
+                File.Delete(legacy);
         }
         catch { /* harmless if it lingers */ }
 

@@ -126,10 +126,12 @@ struct SetupView: View {
     private var modelRow: some View {
         SetupStep(
             number: 3,
-            title: "Whisper model (ggml-base, ~148 MB, multilingual)",
-            description: "Downloads once to ~/Library/Application Support/MyWhisper. Runs locally — no audio leaves your Mac.",
+            title: "Whisper model",
+            description: "Bigger models transcribe lower-resource languages (Urdu, Hindi, Arabic, …) much more accurately. Each model downloads once to ~/Library/Application Support/MyWhisper and runs locally.",
             status: state.modelDownloaded ? StatusBadge(text: "Ready", color: .green) : StatusBadge(text: "Not downloaded", color: .orange)
         ) {
+            modelPicker
+
             if !state.modelDownloaded {
                 if state.modelDownloadProgress > 0 && state.modelDownloadProgress < 1 {
                     ProgressView(value: state.modelDownloadProgress)
@@ -138,20 +140,43 @@ struct SetupView: View {
                         .font(.caption.monospacedDigit())
                         .foregroundStyle(.secondary)
                 } else {
-                    Button("Download model") {
+                    Button("Download \(state.selectedModel.displayName.prefix(while: { $0 != " " }))") {
                         Task { await state.downloadModel() }
                     }
                     .buttonStyle(.borderedProminent)
                 }
             } else {
-                Button("Re-download") {
-                    try? FileManager.default.removeItem(at: ModelDownloader.localPath)
-                    state.refreshModelStatus()
+                HStack(spacing: 8) {
+                    Button("Re-download") {
+                        try? FileManager.default.removeItem(at: ModelDownloader.localPath(for: state.selectedModel))
+                        state.refreshModelStatus()
+                    }
+                    .controlSize(.small)
+                    Text("Using \(state.selectedModel.displayName)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
-                .controlSize(.small)
 
                 languagePicker
             }
+        }
+    }
+
+    private var modelPicker: some View {
+        let binding = Binding(
+            get: { state.selectedModelID },
+            set: { state.selectedModelID = $0 }
+        )
+        return HStack(spacing: 8) {
+            Text("Size")
+            Picker("", selection: binding) {
+                ForEach(WhisperModel.supported) { model in
+                    Text(model.displayName).tag(model.id)
+                }
+            }
+            .labelsHidden()
+            .pickerStyle(.menu)
+            .frame(minWidth: 320, alignment: .leading)
         }
     }
 

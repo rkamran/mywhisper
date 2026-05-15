@@ -35,6 +35,7 @@ public sealed class AppState : INotifyPropertyChanged, IDisposable
         _settings = Settings.Load();
         _selectedInputDeviceId = _settings.SelectedInputDeviceId;
         _selectedLanguage = string.IsNullOrWhiteSpace(_settings.Language) ? "auto" : _settings.Language;
+        _selectedModelId = string.IsNullOrWhiteSpace(_settings.ModelId) ? "base" : _settings.ModelId;
         _polishEnabled = _settings.PolishEnabled;
         _polishEndpoint = _settings.PolishEndpoint;
         _polishModel = _settings.PolishModel;
@@ -76,6 +77,23 @@ public sealed class AppState : INotifyPropertyChanged, IDisposable
         set { if (Set(ref _selectedLanguage, value)) { _settings.Language = value; _settings.Save(); } }
     }
 
+    private string _selectedModelId = "base";
+    public string SelectedModelId
+    {
+        get => _selectedModelId;
+        set
+        {
+            if (Set(ref _selectedModelId, value))
+            {
+                _settings.ModelId = value;
+                _settings.Save();
+                _ = _dispatcher.InvokeAsync(OnSelectedModelChangedAsync);
+            }
+        }
+    }
+
+    public WhisperModel CurrentModel => WhisperModel.ForId(_selectedModelId);
+
     private bool _polishEnabled;
     public bool PolishEnabled
     {
@@ -115,7 +133,7 @@ public sealed class AppState : INotifyPropertyChanged, IDisposable
     public async Task BootstrapAsync()
     {
         RefreshInputDevices();
-        ModelDownloaded = ModelDownloader.IsDownloaded;
+        ModelDownloaded = ModelDownloader.IsDownloaded(CurrentModel);
 
         if (ModelDownloaded)
             await LoadWhisperAsync();
@@ -140,13 +158,19 @@ public sealed class AppState : INotifyPropertyChanged, IDisposable
 
     public async Task DownloadModelAsync()
     {
+        var target = CurrentModel;
+        ModelDownloadProgress = 0;
         try
         {
             var progress = new Progress<double>(p => ModelDownloadProgress = p);
-            await _downloader.DownloadAsync(progress);
-            ModelDownloaded = true;
-            ModelDownloadProgress = 1.0;
-            await LoadWhisperAsync();
+            await _downloader.DownloadAsync(target, progress);
+            // Only flip to ready if the user is still on the same model.
+            if (_selectedModelId == target.Id)
+            {
+                ModelDownloaded = true;
+                ModelDownloadProgress = 1.0;
+                await LoadWhisperAsync();
+            }
         }
         catch (Exception ex)
         {
@@ -165,15 +189,32 @@ public sealed class AppState : INotifyPropertyChanged, IDisposable
     {
         try
         {
-            string path = ModelDownloader.LocalPath;
+            var model = CurrentModel;
+            string path = ModelDownloader.LocalPath(model);
+            _whisper?.Dispose();
             _whisper = await Task.Run(() => new WhisperEngine(path));
-            Log.Info("Whisper model loaded");
+            Log.Info($"Whisper model loaded: {model.Id}");
         }
         catch (Exception ex)
         {
             Log.Error($"Failed to load Whisper model: {ex.Message}");
             Dictation = DictationState.Error($"Failed to load model: {ex.Message}");
         }
+    }
+
+    /// <summary>
+    /// Reacts to the user picking a different model size in the Setup window.
+    /// If the new model is already on disk, swap the WhisperEngine; otherwise
+    /// clear ModelDownloaded so the UI surfaces a Download button.
+    /// </summary>
+    private async Task OnSelectedModelChangedAsync()
+    {
+        _whisper?.Dispose();
+        _whisper = null;
+        ModelDownloadProgress = 0;
+        ModelDownloaded = ModelDownloader.IsDownloaded(CurrentModel);
+        if (ModelDownloaded)
+            await LoadWhisperAsync();
     }
 
     private void StartHotkey()
