@@ -39,14 +39,26 @@ pwsh windows\scripts\package.ps1            # win-x64
 pwsh windows\scripts\package.ps1 -Runtime win-arm64
 ```
 
-Produces a self-contained single-file `MyWhisper-<version>-<rid>.zip` in
-`windows/dist/` — no .NET runtime required on the target machine. Recipients
-extract and run `MyWhisper.exe`; SmartScreen warns once (unsigned).
+Produces in `windows/dist/`:
+
+- **`MyWhisper-<version>-<rid>.zip`** — portable build. Extract anywhere and
+  run `MyWhisper.exe`. Self-contained; no .NET runtime needed on the target.
+- **`MyWhisper-<version>-Setup.exe`** — Inno Setup installer (only if
+  `iscc.exe` is on PATH). Wizard install with Start Menu shortcut, optional
+  desktop icon, optional run-at-login, and a proper uninstaller in
+  Settings → Apps. To enable, install Inno Setup once:
+  ```powershell
+  winget install JRSoftware.InnoSetup
+  ```
+
+Both ship with the VC++ runtime DLLs bundled, so recipients don't need to
+preinstall the Visual C++ Redistributable. SmartScreen still warns once on
+first launch (unsigned) → More info → Run anyway.
 
 ## Architecture
 
-A WPF tray app. No installer, no admin rights, no permission prompts — Windows
-lets desktop apps capture audio and synthesize input directly.
+A WPF tray app. No admin rights or permission prompts needed at runtime —
+Windows lets desktop apps capture audio and synthesize input directly.
 
 | Concern | Implementation |
 |---|---|
