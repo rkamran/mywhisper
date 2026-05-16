@@ -16,6 +16,7 @@ struct SetupView: View {
                     if state.isFullyConfigured {
                         readyCard
                     }
+                    footer
                 }
                 .padding(20)
             }
@@ -305,6 +306,32 @@ struct SetupView: View {
         .overlay(
             RoundedRectangle(cornerRadius: 10).strokeBorder(Color.green.opacity(0.3))
         )
+    }
+
+    private var footer: some View {
+        HStack {
+            Text("MyWhisper is open source (MIT).")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Spacer()
+            Button("Open source licenses") {
+                openBundledLicenses()
+            }
+            .buttonStyle(.link)
+            .font(.caption)
+        }
+        .padding(.top, 8)
+    }
+
+    /// Opens the bundled THIRD_PARTY_LICENSES.md in the user's default markdown
+    /// / text app. The file is symlinked from the repo root into Resources/ so
+    /// release builds always carry the latest attribution.
+    private func openBundledLicenses() {
+        if let url = Bundle.main.url(forResource: "THIRD_PARTY_LICENSES", withExtension: "md") {
+            NSWorkspace.shared.open(url)
+        } else if let url = URL(string: "https://github.com/rkamran/mywhisper/blob/main/THIRD_PARTY_LICENSES.md") {
+            NSWorkspace.shared.open(url)
+        }
     }
 
     private func openMicPrivacySettings() {

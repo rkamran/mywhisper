@@ -57,6 +57,23 @@ if ($missing.Count -gt 0) {
     Write-Warning "The shipped zip will require recipients to install the VC++ Redistributable themselves."
 }
 
+# Copy license + attribution files into the publish output so they end up
+# inside both the zip and the Inno Setup installer (the .iss [Files] section
+# packs everything in $publishD).
+Write-Host "==> Copying license + attribution files..."
+$repoRoot = Split-Path -Parent $projDir
+$licenseFiles = @(
+    @{ Src = Join-Path $repoRoot 'LICENSE';                  Dest = 'LICENSE.txt' },
+    @{ Src = Join-Path $repoRoot 'THIRD_PARTY_LICENSES.md';  Dest = 'THIRD_PARTY_LICENSES.md' }
+)
+foreach ($f in $licenseFiles) {
+    if (Test-Path $f.Src) {
+        Copy-Item $f.Src (Join-Path $publishD $f.Dest) -Force
+    } else {
+        Write-Warning ("License file missing at {0}; skipping." -f $f.Src)
+    }
+}
+
 New-Item -ItemType Directory -Force -Path $distDir | Out-Null
 $zipPath = Join-Path $distDir "MyWhisper-$version-$Runtime.zip"
 if (Test-Path $zipPath) { Remove-Item $zipPath }

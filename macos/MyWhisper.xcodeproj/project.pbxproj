@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		225A685CD1FD083E7D5C6AB6 /* whisper.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 90949B5CFB45AB94AC6E6516 /* whisper.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2A3C0C9BFC15E8EE1C78E177 /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 37144C188153518FF83A08E0 /* LICENSE.txt */; };
 		2DD820E868D867DD449656DC /* AudioDeviceProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F67583F483BE6ADBD70DBC6 /* AudioDeviceProbe.swift */; };
 		3DBE1F417238BA4C8BB3AA89 /* whisper.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90949B5CFB45AB94AC6E6516 /* whisper.xcframework */; };
 		4BC5247F0286E3E3F5E43C5F /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3AC28297FB8FB048F8116F /* KeychainStore.swift */; };
@@ -16,6 +17,7 @@
 		6F9BD4F8473E46D3549D9465 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7CB34E3695C75E42F07B03D /* AppState.swift */; };
 		6FF1AF0817246D7EB2944F78 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C612900822B6319C8A06AAF /* AppDelegate.swift */; };
 		71B41EFB198305B9BF2B2919 /* HotkeyMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F90C97A41D7BF427B88B78 /* HotkeyMonitor.swift */; };
+		808334770892EE2493A1C1CD /* THIRD_PARTY_LICENSES.md in Resources */ = {isa = PBXBuildFile; fileRef = 400DBE6614ED5A0A135F943D /* THIRD_PARTY_LICENSES.md */; };
 		886566555392A7CE1BFD137D /* WhisperEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = E54DAB3A13D01FAB1A71DB17 /* WhisperEngine.swift */; };
 		9694097BD9BFA86E9AA08C6C /* WhisperLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2667D7F1F403AAC93964E20A /* WhisperLanguage.swift */; };
 		97725A69C14820AB96398CEA /* SetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06899109E491CC8F32FB4FAB /* SetupView.swift */; };
@@ -49,6 +51,8 @@
 		2667D7F1F403AAC93964E20A /* WhisperLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhisperLanguage.swift; sourceTree = "<group>"; };
 		2B1CE5257181F45A04121514 /* Polisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Polisher.swift; sourceTree = "<group>"; };
 		2D3DCE8189CD1B809B137918 /* MyWhisperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyWhisperApp.swift; sourceTree = "<group>"; };
+		37144C188153518FF83A08E0 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		400DBE6614ED5A0A135F943D /* THIRD_PARTY_LICENSES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = THIRD_PARTY_LICENSES.md; sourceTree = "<group>"; };
 		4D0588197803478E11FC8894 /* ModelDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelDownloader.swift; sourceTree = "<group>"; };
 		90949B5CFB45AB94AC6E6516 /* whisper.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = whisper.xcframework; path = Frameworks/whisper.xcframework; sourceTree = "<group>"; };
 		915D010E348B3851A624D7B8 /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
@@ -108,6 +112,7 @@
 				93A9B62A53ECD87A2A91B173 /* Assets.xcassets */,
 				2D3DCE8189CD1B809B137918 /* MyWhisperApp.swift */,
 				A83AF72577F520C5485D389C /* Models */,
+				EEA13832042B50F802967090 /* Resources */,
 				E95CE8AB886F94355AB0F1BD /* Services */,
 				F56CB741A823F35FBA993851 /* Views */,
 			);
@@ -127,6 +132,15 @@
 				E54DAB3A13D01FAB1A71DB17 /* WhisperEngine.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		EEA13832042B50F802967090 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				37144C188153518FF83A08E0 /* LICENSE.txt */,
+				400DBE6614ED5A0A135F943D /* THIRD_PARTY_LICENSES.md */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		F187769DBB672E0C9256DB4B /* Frameworks */ = {
@@ -209,6 +223,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				EDC0E64C7945E954F8F8E27D /* Assets.xcassets in Resources */,
+				2A3C0C9BFC15E8EE1C78E177 /* LICENSE.txt in Resources */,
+				808334770892EE2493A1C1CD /* THIRD_PARTY_LICENSES.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

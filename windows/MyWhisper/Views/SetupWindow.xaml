@@ -205,6 +205,9 @@
                 <TextBlock Text="  ·  " Foreground="#FF606060" VerticalAlignment="Center" />
                 <Button Content="Microphone privacy settings" Click="OnOpenMicSettings"
                         Padding="8,3" FontSize="11" Margin="0" />
+                <TextBlock Text="  ·  " Foreground="#FF606060" VerticalAlignment="Center" />
+                <Button Content="Open source licenses" Click="OnOpenLicenses"
+                        Padding="8,3" FontSize="11" Margin="0" />
             </StackPanel>
         </Border>
     </Grid>
