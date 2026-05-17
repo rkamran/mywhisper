@@ -16,17 +16,22 @@
     <Platforms>x64;ARM64</Platforms>
     <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
     <SelfContained>true</SelfContained>
-    <PublishSingleFile>true</PublishSingleFile>
-    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <!--
-      Whisper.net.Runtime ships native DLLs (whisper.dll, ggml*.dll, …) plus
-      adjacent metadata that the library probes for at startup. Under
-      PublishSingleFile the default extractor only restores unmanaged binaries,
-      so the probe fails with "Native library not found in default path."
-      IncludeAllContentForSelfExtract forces every bundled item to land in the
-      same extraction directory at runtime, satisfying the probe.
+      PublishSingleFile is intentionally OFF. With it on, .NET extracts the
+      bundled native DLLs (whisper.dll, ggml*.dll) to a per-launch temp
+      directory under runtimes/<rid>/. NativeLibrary.Load then uses
+      LOAD_WITH_ALTERED_SEARCH_PATH which searches whisper.dll's own folder
+      first for its dependencies (VCRUNTIME140.dll etc.) — and they're not
+      there, they're next to MyWhisper.exe in the install dir. The load fails
+      with "Cannot load the library on this platform using NativeLibrary."
+
+      With single-file off the publish output is a normal folder where
+      MyWhisper.exe, whisper.dll, ggml*.dll, and the VC++ runtime DLLs all
+      live side by side at standard NuGet runtime paths, so the loader's
+      probe works the way the package expects. Inno Setup still bundles the
+      whole folder into a single setup.exe — recipient UX is unchanged.
     -->
-    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <PublishSingleFile>false</PublishSingleFile>
     <Authors>MyWhisper</Authors>
   </PropertyGroup>
 
