@@ -25,8 +25,6 @@ dotnet publish $csproj `
     -c Release `
     -r $Runtime `
     --self-contained true `
-    -p:PublishSingleFile=true `
-    -p:IncludeNativeLibrariesForSelfExtract=true `
     -o $publishD
 
 $exe = Join-Path $publishD 'MyWhisper.exe'
