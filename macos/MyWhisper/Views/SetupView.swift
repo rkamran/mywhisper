@@ -68,7 +68,8 @@ struct SetupView: View {
             HStack(spacing: 8) {
                 Text("Input device")
                 Picker("", selection: selection) {
-                    Text("System default").tag(String?.none)
+                    Text("System default" + (state.defaultInputDeviceName.map { " (\($0))" } ?? ""))
+                        .tag(String?.none)
                     if !state.availableInputDevices.isEmpty {
                         Divider()
                         ForEach(state.availableInputDevices) { device in
