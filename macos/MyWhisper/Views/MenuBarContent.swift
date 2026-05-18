@@ -14,6 +14,12 @@ struct MenuBarContent: View {
                 .font(.caption)
         }
         Divider()
+        Label(state.activeInputDeviceName, systemImage: "mic")
+            .labelStyle(.titleAndIcon)
+            .lineLimit(1)
+            .truncationMode(.tail)
+            .font(.caption)
+        Divider()
         Button("Quit MyWhisper") { NSApp.terminate(nil) }
             .keyboardShortcut("q")
     }

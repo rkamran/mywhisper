@@ -48,6 +48,20 @@ final class AppState: ObservableObject {
 
     var selectedModel: WhisperModel { WhisperModel.model(id: selectedModelID) }
 
+    /// Name of the system default input device, or nil if unavailable.
+    var defaultInputDeviceName: String? {
+        AudioDeviceProbe.defaultInputDeviceName()
+    }
+
+    /// Human-readable name of the active input device.
+    var activeInputDeviceName: String {
+        if let uid = selectedInputDeviceUID,
+           let device = availableInputDevices.first(where: { $0.uid == uid }) {
+            return device.name
+        }
+        return defaultInputDeviceName ?? "Unknown"
+    }
+
     @Published var polishEnabled: Bool = false {
         didSet { UserDefaults.standard.set(polishEnabled, forKey: Self.polishEnabledKey) }
     }
