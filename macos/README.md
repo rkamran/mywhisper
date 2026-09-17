@@ -65,7 +65,7 @@ If you edit `project.yml` (or want to add files), regenerate with:
 ```
 mywhisper/
 ├── project.yml                          # XcodeGen config
-├── Frameworks/whisper.xcframework/      # Pre-built whisper.cpp v1.8.4 (macOS only)
+├── Frameworks/whisper.xcframework/      # Pre-built whisper.cpp v1.9.4 (macOS only)
 └── MyWhisper/
     ├── Info.plist
     ├── MyWhisper.entitlements

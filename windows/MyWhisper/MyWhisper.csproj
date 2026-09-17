@@ -10,7 +10,7 @@
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
     <AssemblyName>MyWhisper</AssemblyName>
     <RootNamespace>MyWhisper</RootNamespace>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
     <Product>MyWhisper</Product>
     <Description>Push-to-talk dictation for Windows, powered by Whisper.</Description>
     <Platforms>x64;ARM64</Platforms>
@@ -38,8 +38,8 @@
   <ItemGroup>
     <!-- Speech-to-text: whisper.cpp wrapped for .NET. Runtime package ships the
          native CPU library; swap to Whisper.net.Runtime.Cublas for NVIDIA GPUs. -->
-    <PackageReference Include="Whisper.net" Version="1.7.4" />
-    <PackageReference Include="Whisper.net.Runtime" Version="1.7.4" />
+    <PackageReference Include="Whisper.net" Version="1.9.1" />
+    <PackageReference Include="Whisper.net.Runtime" Version="1.9.1" />
 
     <!-- Audio capture (WASAPI) + resampling. -->
     <PackageReference Include="NAudio" Version="2.2.1" />
