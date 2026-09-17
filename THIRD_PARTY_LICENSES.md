@@ -48,7 +48,7 @@ the upstream **whisper.cpp** release (see above).
 
 - **What:** .NET bindings around whisper.cpp.
 - **Project:** <https://github.com/sandrohanea/whisper.net>
-- **NuGet:** `Whisper.net` 1.7.4
+- **NuGet:** `Whisper.net` 1.9.1
 - **License:** MIT — see the *MIT License (template)* section below.
 - **Copyright:** Copyright (c) 2023 Sandro Hanea
 
@@ -57,7 +57,7 @@ the upstream **whisper.cpp** release (see above).
 - **What:** Native whisper.cpp binaries packaged for redistribution alongside
   Whisper.net. Same upstream project as Whisper.net; ships the CPU build of
   whisper.cpp.
-- **NuGet:** `Whisper.net.Runtime` 1.7.4
+- **NuGet:** `Whisper.net.Runtime` 1.9.1
 - **License:** MIT — see the *MIT License (template)* section below.
 - **Copyright:** Copyright (c) 2023 Sandro Hanea
   (whisper.cpp portion: Copyright (c) 2023-2024 The ggml authors)
